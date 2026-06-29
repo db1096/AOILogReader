@@ -3,37 +3,29 @@ using System.IO;
 
 internal static class PositionStore
 {
-    private static readonly string PositionFile =
-        Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory,
-            "position.dat");
+    private static readonly string FilePath =
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "position.dat");
 
     public static long Load()
     {
         try
         {
-            if (!File.Exists(PositionFile))
+            if (!File.Exists(FilePath))
                 return 0;
 
-            string txt = File.ReadAllText(PositionFile).Trim();
-
-            if (long.TryParse(txt, out long pos))
-                return pos;
+            return long.Parse(File.ReadAllText(FilePath));
         }
         catch
         {
+            return 0;
         }
-
-        return 0;
     }
 
-    public static void Save(long position)
+    public static void Save(long pos)
     {
         try
         {
-            File.WriteAllText(
-                PositionFile,
-                position.ToString());
+            File.WriteAllText(FilePath, pos.ToString());
         }
         catch
         {
@@ -44,7 +36,7 @@ internal static class PositionStore
     {
         try
         {
-            File.WriteAllText(PositionFile, "0");
+            File.WriteAllText(FilePath, "0");
         }
         catch
         {
