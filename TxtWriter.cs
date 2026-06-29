@@ -16,51 +16,35 @@ internal static class TxtWriter
     {
         try
         {
-            string folder =
-                Path.Combine(Config.Output, model, layer);
-
+            string folder = Path.Combine(Config.Output, model, layer);
             Directory.CreateDirectory(folder);
 
-            string file =
-                Path.Combine(folder, lot + ".txt");
+            string file = Path.Combine(folder, lot + ".txt");
 
             int pnlScan = panels.Count;
+            int totalDefect = panels.Sum(x => x.Value.Defect);
 
-            int totalDefect =
-                panels.Sum(x => x.Value.Defect);
-
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.AppendLine($"LOT:\t{lot}");
             sb.AppendLine($"LAYER:\t{layer}");
             sb.AppendLine($"MODEL:\t{model}");
-            sb.AppendLine($"");
-
-            sb.AppendLine($"PNL SCAN :\t{pnlScan}");
-            sb.AppendLine($"TOTAL DEFECT :\t{totalDefect}");
-
-            sb.AppendLine("");
-
+            sb.AppendLine();
+            sb.AppendLine($"PNL SCAN:\t{pnlScan}");
+            sb.AppendLine($"TOTAL DEFECT:\t{totalDefect}");
+            sb.AppendLine();
             sb.AppendLine("PNL\tDEFECT\tSCAN TIME");
+            sb.AppendLine("--------------------------------");
 
-            sb.AppendLine("------------------------------------------");
-
-            foreach (var p in panels
-                .OrderByDescending(x => x.Key))
+            foreach (var p in panels.OrderByDescending(x => x.Key))
             {
-                sb.AppendLine(
-                    $"{p.Value.PNL}\t{p.Value.Defect}\t{p.Value.ScanTime}");
+                sb.AppendLine($"{p.Value.PNL}\t{p.Value.Defect}\t{p.Value.ScanTime}");
             }
 
             lock (_lock)
             {
-                File.WriteAllText(
-                    file,
-                    sb.ToString(),
-                    Encoding.UTF8);
+                File.WriteAllText(file, sb.ToString(), Encoding.UTF8);
             }
-
-            Logger.Info($"Update : {lot}");
         }
         catch (Exception ex)
         {
